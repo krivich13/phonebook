@@ -18,34 +18,36 @@ class ContactsListScreenWidget
         appBar: AppBar(
           title: const Text('Список контактов'),
         ),
-        body: ValueListenableBuilder<List<Contact>>(
-          valueListenable: wm.contactList,
-          builder: (_, data, __) {
-            return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (final contact in data)
-                    ContactSmallWidget(contact: contact)
-                ],
-              ),
-            );
-          },
-        ));
+        body: SingleChildScrollView(
+            child: Container(
+                child: ValueListenableBuilder<List<Contact>>(
+                  valueListenable: wm.contactList,
+                  builder: (_, data, __) {
+                    return buildExpansionPanelList(data);
+                  },
+                )
+            )
+        )
+    );
   }
-}
 
-class ContactSmallWidget extends StatelessWidget {
-  final Contact contact;
-
-  const ContactSmallWidget({Key? key, required this.contact}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final title = contact.firstName + ' ' + contact.lastName;
-    return ListTile(
-      title: Text(title),
-      subtitle: Text(contact.phone),
+  ExpansionPanelList buildExpansionPanelList(List<Contact> data) {
+    return ExpansionPanelList.radio(
+      children: data.map<ExpansionPanelRadio>((Contact contact) {
+        return ExpansionPanelRadio(
+            value: contact.id,
+            headerBuilder: (_, __) {
+              return ListTile(
+                title: Text(contact.lastName),
+              );
+            },
+            body: ListTile(
+              title: Text(contact.phone),
+              subtitle: Text(contact.email),
+            )
+        );
+      }).toList()
     );
   }
 }
+
