@@ -38,15 +38,60 @@ class ContactsListScreenWidget
             value: contact.id,
             headerBuilder: (_, __) {
               return ListTile(
-                title: Text(contact.lastName),
+                title: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${contact.lastName} ${contact.firstName} ${contact.secondName}',
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      contact.phone,
+                      style: const TextStyle(
+                        fontSize: 20,
+                      ),
+                    ),
+                    Text(contact.email)
+                  ],
+                ),
+                onLongPress: () {
+
+                },
               );
             },
             body: ListTile(
-              title: Text(contact.phone),
-              subtitle: Text(contact.email),
-            )
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('Дополнительные телефоны:'),
+                    //OtherPhones(contact.otherPhones)
+                  ],
+              ),
+              subtitle: const Text('Комментарии:'),
+            ),
+            canTapOnHeader: true
         );
       }).toList()
+    );
+  }
+}
+
+class OtherPhones extends StatelessWidget {
+  final List<String> phones;
+  const OtherPhones({
+    Key? key,
+    required this.phones,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: phones.map<Text>((String phone) {
+        return Text(phone);
+      }).toList(),
     );
   }
 }
