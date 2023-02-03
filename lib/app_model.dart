@@ -1,5 +1,8 @@
 import 'package:flutter/foundation.dart';
 
-class AppModel extends ChangeNotifier {
+import 'entity/contact.dart';
 
+class AppModel extends ChangeNotifier {
+  List<Contact>? contactList;
+  int? openedContact;
 }

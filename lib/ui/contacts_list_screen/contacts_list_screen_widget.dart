@@ -23,7 +23,7 @@ class ContactsListScreenWidget
                 child: ValueListenableBuilder<List<Contact>>(
                   valueListenable: wm.contactList,
                   builder: (_, data, __) {
-                    return buildExpansionPanelList(data);
+                    return buildExpansionPanelList(wm, data);
                   },
                 )
             )
@@ -31,11 +31,12 @@ class ContactsListScreenWidget
     );
   }
 
-  ExpansionPanelList buildExpansionPanelList(List<Contact> data) {
+  ExpansionPanelList buildExpansionPanelList(IContactsListScreenWidgetModel wm, List<Contact> data) {
     return ExpansionPanelList.radio(
       children: data.map<ExpansionPanelRadio>((Contact contact) {
+        var index = data.indexOf(contact);
         return ExpansionPanelRadio(
-            value: contact.id,
+            value: index,
             headerBuilder: (_, __) {
               return ListTile(
                 title: Column(
@@ -57,9 +58,7 @@ class ContactsListScreenWidget
                     Text(contact.email)
                   ],
                 ),
-                onLongPress: () {
-
-                },
+                onLongPress: () => wm.openContact(index),
               );
             },
             body: ListTile(
