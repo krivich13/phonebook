@@ -9,7 +9,7 @@ class Contact {
   final String firstName;
   final String secondName;
   final String? nickName;
-  final String phone;
+  final List<String> phones;
   final String email;
   final String? socNet;
   final String? importantDate;
@@ -21,7 +21,7 @@ class Contact {
     required this.firstName,
     required this.secondName,
     required this.nickName,
-    required this.phone,
+    required this.phones,
     required this.email,
     required this.socNet,
     required this.importantDate,

@@ -12,7 +12,8 @@ Contact _$ContactFromJson(Map<String, dynamic> json) => Contact(
       firstName: json['first_name'] as String,
       secondName: json['second_name'] as String,
       nickName: json['nick_name'] as String?,
-      phone: json['phone'] as String,
+      phones:
+          (json['phones'] as List<dynamic>).map((e) => e as String).toList(),
       email: json['email'] as String,
       socNet: json['soc_net'] as String?,
       importantDate: json['important_date'] as String?,
@@ -25,7 +26,7 @@ Map<String, dynamic> _$ContactToJson(Contact instance) => <String, dynamic>{
       'first_name': instance.firstName,
       'second_name': instance.secondName,
       'nick_name': instance.nickName,
-      'phone': instance.phone,
+      'phones': instance.phones,
       'email': instance.email,
       'soc_net': instance.socNet,
       'important_date': instance.importantDate,

@@ -1,4 +1,5 @@
 import 'package:elementary/elementary.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:phonebook2/app_model.dart';
 import 'package:phonebook2/entity/contact.dart';
@@ -7,7 +8,7 @@ import 'contact_model.dart';
 import 'contact_widget.dart';
 
 abstract class IContactWidgetModel extends IWidgetModel {
-  Contact get contact;
+  ValueListenable<Contact> get contact;
 }
 
 ContactWidgetModel defaultContactWidgetModelFactory(BuildContext context) {
@@ -30,5 +31,5 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
   }
 
   @override
-  Contact get contact => model.contact;
+  ValueListenable<Contact> get contact => model.contact;
 }

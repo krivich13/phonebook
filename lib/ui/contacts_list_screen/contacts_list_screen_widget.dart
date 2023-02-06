@@ -50,7 +50,7 @@ class ContactsListScreenWidget
                       ),
                     ),
                     Text(
-                      contact.phone,
+                      contact.phones[0],
                       style: const TextStyle(
                         fontSize: 20,
                       ),

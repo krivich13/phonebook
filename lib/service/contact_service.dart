@@ -12,7 +12,7 @@ class ContactService {
   Future<List<Contact>> getContactList() async {
     final apiKey = _sessionDataProvider.apiKey();
     // apikey нужно передать в http запросе. пока просто имитируем успешный JSON ответ от сервера
-    const contactListResponse = '[{"id":1,"last_name":"Кривошеин","first_name":"Олег","second_name":"Владимирович","nick_name":"krivich","phone":"+79999999999","email":"krivich@krivich.ru","soc_net":"tg","important_date":"","comment":""},{"id":2,"last_name":"Петров","first_name":"Пётр","second_name":"Петрович","nick_name":"petya","phone":"+78888888888","email":"petya@petya.com","soc_net":"vk","important_date":"","comment":""}]';
+    const contactListResponse = '[{"id":1,"last_name":"Кривошеин","first_name":"Олег","second_name":"Владимирович","nick_name":"krivich","phones":["+79999999999","+78888888888"],"email":"krivich@krivich.ru","soc_net":"tg","important_date":"","comment":""},{"id":2,"last_name":"Петров","first_name":"Пётр","second_name":"Петрович","nick_name":"petya","phones":["+77777777777"],"email":"petya@petya.com","soc_net":"vk","important_date":"","comment":""}]';
 
     final contactListJson = jsonDecode(contactListResponse ?? '') as List;
 

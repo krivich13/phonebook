@@ -1,6 +1,7 @@
 import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:phonebook2/entity/contact.dart';
 import 'contact_wm.dart';
 
 // TODO: cover with documentation
@@ -18,83 +19,81 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
           title: const Text('Контакт'),
         ),
         body: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  label: Text(wm.contact.lastName),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  label: Text(wm.contact.firstName),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  label: Text(wm.contact.secondName),
-                ),
-              ),
-              SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                  label: Text(wm.contact.nickName ?? ''),
-                ),
-              ),
-              SizedBox(height: 20),
-              //PhonesGroup(),
-
-            ],
+          child: ValueListenableBuilder<Contact>(
+            valueListenable: wm.contact,
+            builder: (_, contact, ___) {
+              return Column(
+                children: [
+                  SizedBox(height: 20),
+                  TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text(contact.lastName),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text(contact.firstName),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text(contact.secondName),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      label: Text(contact.nickName ?? ''),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  PhonesGroup(
+                    phones: contact.phones,
+                  ),
+                ],
+              );
+            },
           ),
         ));
   }
 }
 
 class PhonesGroup extends StatelessWidget {
-  final ValueListenable<List<String>> phones;
+  final List<String> phones;
+
   const PhonesGroup({
-    Key? key, required this.phones,
+    Key? key,
+    required this.phones,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Text('Телефоны'),
-        ValueListenableBuilder<List<String>>(
-            valueListenable: phones,
-            builder: (_, __, ___) {return const Text('');},
-        ),
-        Column(
-          children: [
-            ListTile(
-              title: const TextField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              trailing: PopupMenuButton(
-                itemBuilder: (BuildContext context) {
-                  return [
-                    const PopupMenuItem(
-                        child: Text('Сделать основным'))
-                  ];
-                },
+    return Column(children: [
+      const Text('Телефоны'),
+      Column(
+        children: phones.map<ListTile>((String phone) {
+          return ListTile(
+            title: TextField(
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                label: Text(phone),
               ),
             ),
-          ],
-        ),
-        TextButton(
-            onPressed: () {},
-            child: const Text('Добавить'))
-      ],
-    );
+            trailing: PopupMenuButton(
+              itemBuilder: (BuildContext context) {
+                return [const PopupMenuItem(child: Text('Сделать основным'))];
+              },
+            ),
+          );
+        }).toList(),
+      ),
+      TextButton(onPressed: () {}, child: const Text('Добавить'))
+    ]);
   }
 }
