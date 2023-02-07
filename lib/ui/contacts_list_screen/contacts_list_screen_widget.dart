@@ -21,77 +21,75 @@ class ContactsListScreenWidget
         body: SingleChildScrollView(
             child: Container(
                 child: ValueListenableBuilder<List<Contact>>(
-                  valueListenable: wm.contactList,
-                  builder: (_, data, __) {
-                    return buildExpansionPanelList(wm, data);
-                  },
-                )
-            )
-        )
+          valueListenable: wm.contactList,
+          builder: (_, data, __) {
+            return buildExpansionPanelList(wm, data);
+          },
+        ))),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FloatingActionButton(onPressed: () {}, child: const Icon(Icons.add),)
+          ],
+        ),
     );
   }
 
-  ExpansionPanelList buildExpansionPanelList(IContactsListScreenWidgetModel wm, List<Contact> data) {
+  ExpansionPanelList buildExpansionPanelList(
+      IContactsListScreenWidgetModel wm, List<Contact> data) {
     return ExpansionPanelList.radio(
-      children: data.map<ExpansionPanelRadio>((Contact contact) {
-        var index = data.indexOf(contact);
-        return ExpansionPanelRadio(
-            value: index,
-            headerBuilder: (_, __) {
-              return ListTile(
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '${contact.lastName} ${contact.firstName} ${contact.secondName}',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      contact.phones[0],
-                      style: const TextStyle(
-                        fontSize: 20,
-                      ),
-                    ),
-                    Text(contact.email)
-                  ],
-                ),
-                onLongPress: () => wm.openContact(index),
-              );
-            },
-            body: ListTile(
+        children: data.map<ExpansionPanelRadio>((Contact contact) {
+      var index = data.indexOf(contact);
+      return ExpansionPanelRadio(
+          value: index,
+          headerBuilder: (_, __) {
+            return ListTile(
               title: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
-                    Text('Дополнительные телефоны:'),
-                    //OtherPhones(contact.otherPhones)
-                  ],
+                children: [
+                  Text(
+                    '${contact.lastName} ${contact.firstName} ${contact.secondName}',
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Text(
+                    contact.phones[0],
+                    style: const TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  Text(contact.email)
+                ],
               ),
-              subtitle: const Text('Комментарии:'),
-            ),
-            canTapOnHeader: true
-        );
-      }).toList()
-    );
+              onLongPress: () => wm.openContact(index),
+            );
+          },
+          body: ListTile(
+            title: buildOtherPhones(contact.phones),
+            subtitle: const Text('Комментарии:'),
+          ),
+          canTapOnHeader: true);
+    }).toList());
+  }
+
+  Column? buildOtherPhones(List<String> phones) {
+    int otherPhonesNum = phones.length - 1;
+    if (otherPhonesNum > 0) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Дополнительные телефоны:'),
+          Column(
+              children: List.generate(otherPhonesNum, (index) {
+                  return Text(phones[index+1]);
+              })
+          )
+        ],
+      );
+    } else {
+      return null;
+    }
   }
 }
-
-class OtherPhones extends StatelessWidget {
-  final List<String> phones;
-  const OtherPhones({
-    Key? key,
-    required this.phones,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: phones.map<Text>((String phone) {
-        return Text(phone);
-      }).toList(),
-    );
-  }
-}
-
