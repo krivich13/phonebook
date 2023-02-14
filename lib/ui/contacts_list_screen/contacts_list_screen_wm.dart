@@ -13,7 +13,7 @@ import 'contacts_list_screen_widget.dart';
 abstract class IContactsListScreenWidgetModel extends IWidgetModel {
   ValueListenable<List<Contact>> get contactList;
 
-  void openContact(int index);
+  void openContactScreen([int? index]);
 }
 
 ContactsListScreenWidgetModel defaultContactsListScreenWidgetModelFactory(
@@ -43,8 +43,12 @@ class ContactsListScreenWidgetModel
   ValueListenable<List<Contact>> get contactList => model.contactList;
 
   @override
-  void openContact(int index) {
-    model.openContact(index);
+  void openContactScreen([int? index]) {
+    if (index != null) {
+      model.openContact(index);
+    } else {
+      model.closeContact();
+    }
     _navigator.push(
       context,
       MaterialPageRoute<void>(

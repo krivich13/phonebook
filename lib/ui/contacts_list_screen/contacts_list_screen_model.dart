@@ -22,4 +22,8 @@ class ContactsListScreenModel extends ElementaryModel {
   void openContact(int index) {
     _appModel.openedContact = index;
   }
+
+  void closeContact() {
+    _appModel.openedContact = null;
+  }
 }

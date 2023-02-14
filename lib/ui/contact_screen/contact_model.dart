@@ -4,6 +4,13 @@ import 'package:flutter/cupertino.dart';
 import '../../app_model.dart';
 import '../../entity/contact.dart';
 
+enum Mode {
+  none,
+  read,
+  edit,
+  create
+}
+
 // TODO: cover with documentation
 /// Default Elementary model for Contact module
 class ContactModel extends ElementaryModel {
@@ -20,7 +27,12 @@ class ContactModel extends ElementaryModel {
     comment: '',
 
   ));
+
+  final ValueNotifier<List<String>> phones = ValueNotifier([]);
+
   final AppModel _appModel;
+
+  final Mode mode = Mode.none;
 
   ContactModel(this._appModel);
 

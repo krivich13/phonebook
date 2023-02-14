@@ -24,37 +24,54 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
             builder: (_, contact, ___) {
               return Column(
                 children: [
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: wm.lastNameCtrl,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      label: Text(contact.lastName),
+                      label: Text('Фамилия'),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: wm.firstNameCtrl,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      label: Text(contact.firstName),
+                      label: Text('Имя'),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: wm.secondNameCtrl,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      label: Text(contact.secondName),
+                      label: Text('Отчество'),
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
-                    decoration: InputDecoration(
+                    controller: wm.nickNameCtrl,
+                    decoration: const InputDecoration(
                       border: OutlineInputBorder(),
-                      label: Text(contact.nickName ?? ''),
+                      label: Text('Псевдоним'),
                     ),
                   ),
-                  SizedBox(height: 20),
-                  PhonesGroup(
-                    phones: contact.phones,
+                  const SizedBox(height: 20),
+                  Column(
+                    children: [
+                      const Text('Телефоны'),
+                      StateNotifierBuilder<List<TextEditingController>>(
+                        listenableState: wm.phonesCtrlList,
+                        builder: (_, controllersList) {
+                          return PhonesGroup(controllers: controllersList);
+                        },
+                      ),
+                      TextButton(
+                          onPressed: () {
+                            wm.addPhone();
+                          },
+                          child: const Text('Добавить'))
+                    ],
                   ),
                 ],
               );
@@ -65,35 +82,27 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
 }
 
 class PhonesGroup extends StatelessWidget {
-  final List<String> phones;
-
-  const PhonesGroup({
-    Key? key,
-    required this.phones,
-  }) : super(key: key);
+  final List<TextEditingController>? controllers;
+  const PhonesGroup({Key? key, required this.controllers}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      const Text('Телефоны'),
-      Column(
-        children: phones.map<ListTile>((String phone) {
-          return ListTile(
-            title: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                label: Text(phone),
-              ),
-            ),
-            trailing: PopupMenuButton(
-              itemBuilder: (BuildContext context) {
-                return [const PopupMenuItem(child: Text('Сделать основным'))];
-              },
-            ),
-          );
-        }).toList(),
-      ),
-      TextButton(onPressed: () {}, child: const Text('Добавить'))
-    ]);
+    return Column(
+        children: controllers!.map<ListTile>((TextEditingController phoneCtrl) {
+      return ListTile(
+        title: TextField(
+          controller: phoneCtrl,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            label: Text("Телефон"),
+          ),
+        ),
+        trailing: PopupMenuButton(
+          itemBuilder: (BuildContext context) {
+            return [const PopupMenuItem(child: Text('Сделать основным'))];
+          },
+        ),
+      );
+    }).toList());
   }
 }

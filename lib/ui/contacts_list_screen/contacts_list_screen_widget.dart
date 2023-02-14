@@ -29,7 +29,7 @@ class ContactsListScreenWidget
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            FloatingActionButton(onPressed: () {}, child: const Icon(Icons.add),)
+            FloatingActionButton(onPressed: () => wm.openContactScreen(), child: const Icon(Icons.add),)
           ],
         ),
     );
@@ -63,7 +63,7 @@ class ContactsListScreenWidget
                   Text(contact.email)
                 ],
               ),
-              onLongPress: () => wm.openContact(index),
+              onLongPress: () => wm.openContactScreen(index),
             );
           },
           body: ListTile(
