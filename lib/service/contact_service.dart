@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:phonebook2/entity/contact.dart';
 import 'package:phonebook2/provider/contact_api_provider.dart';
+import 'package:http/http.dart' as http;
 
 import '../provider/session_data_provider.dart';
 
@@ -12,15 +13,35 @@ class ContactService {
   Future<List<Contact>> getContactList() async {
     final apiKey = _sessionDataProvider.apiKey();
     // apikey нужно передать в http запросе. пока просто имитируем успешный JSON ответ от сервера
-    const contactListResponse = '[{"id":1,"last_name":"Кривошеин","first_name":"Олег","second_name":"Владимирович","nick_name":"krivich","phones":["+79999999999","+78888888888"],"email":"krivich@krivich.ru","soc_net":"tg","important_date":"","comment":""},{"id":2,"last_name":"Петров","first_name":"Пётр","second_name":"Петрович","nick_name":"petya","phones":["+77777777777"],"email":"petya@petya.com","soc_net":"vk","important_date":"","comment":""}]';
 
-    final contactListJson = jsonDecode(contactListResponse ?? '') as List;
-
-    final result = <Contact>[];
-    for (final contact in contactListJson) {
-      result.add(Contact.fromJson(contact as Map<String, dynamic>));
+    final response = await http
+        .get(Uri.parse('http://10.0.2.2:8080/contacts/list'));
+    if (response.statusCode == 200) {
+      List<dynamic> contactJsonList = jsonDecode(response.body);
+      List<Contact> contactList = contactJsonList.map((contactJson) => Contact.fromJson(contactJson)).toList();
+      return contactList;
+    } else {
+      // If the server did not return a 200 OK response,
+      // then throw an exception.
+      throw Exception('Failed to load album');
     }
+  }
 
-    return result;
+  Future<int> createContact(Contact contact) async {
+    String json = jsonEncode(contact);
+    
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8080/contacts/add'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: json
+    );
+
+    if (response.statusCode == 201) {
+      return int.parse(response.body);
+    } else {
+      throw Exception('Failed to create contact.');
+    }
   }
 }

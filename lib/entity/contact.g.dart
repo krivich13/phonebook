@@ -14,9 +14,12 @@ Contact _$ContactFromJson(Map<String, dynamic> json) => Contact(
       nickName: json['nick_name'] as String?,
       phones:
           (json['phones'] as List<dynamic>).map((e) => e as String).toList(),
-      email: json['email'] as String,
-      socNet: json['soc_net'] as String?,
-      importantDate: json['important_date'] as String?,
+      email: (json['email'] as List<dynamic>).map((e) => e as String).toList(),
+      socNet:
+          (json['soc_net'] as List<dynamic>).map((e) => e as String).toList(),
+      importantDate: (json['important_date'] as List<dynamic>)
+          .map((e) => e as String)
+          .toList(),
       comment: json['comment'] as String?,
     );
 

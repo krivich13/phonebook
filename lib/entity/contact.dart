@@ -10,9 +10,9 @@ class Contact {
   final String secondName;
   final String? nickName;
   final List<String> phones;
-  final String email;
-  final String? socNet;
-  final String? importantDate;
+  final List<String> email;
+  final List<String> socNet;
+  final List<String> importantDate;
   final String? comment;
 
   Contact({

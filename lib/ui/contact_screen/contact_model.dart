@@ -1,45 +1,50 @@
 import 'package:elementary/elementary.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'package:phonebook2/service/contact_service.dart';
 import '../../app_model.dart';
 import '../../entity/contact.dart';
 
-enum Mode {
-  none,
-  read,
-  edit,
-  create
-}
-
-// TODO: cover with documentation
-/// Default Elementary model for Contact module
 class ContactModel extends ElementaryModel {
-  final ValueNotifier<Contact> contact = ValueNotifier(Contact(
+  Contact contact = Contact(
     id: 0,
     lastName: '',
     firstName: '',
     secondName: '',
     nickName: '',
     phones: [],
-    email: '',
-    socNet: '',
-    importantDate: '',
+    email: [],
+    socNet: [],
+    importantDate: [],
     comment: '',
 
-  ));
+  );
+
+  final ContactService _contactService;
 
   final ValueNotifier<List<String>> phones = ValueNotifier([]);
 
   final AppModel _appModel;
 
-  final Mode mode = Mode.none;
+  final ValueNotifier<bool> readOnly = ValueNotifier(true);
 
-  ContactModel(this._appModel);
+  ContactModel(this._appModel, this._contactService);
 
   getContact() {
     if (_appModel.openedContact != null) {
-      final value = _appModel.contactList![_appModel.openedContact!];
-      contact.value = value;
+      contact = _appModel.contactList.value[_appModel.openedContact!];
+      readOnly.value = true;
+    } else {
+      readOnly.value = false;
     }
+  }
+
+  changeMode() {
+    readOnly.value = !readOnly.value;
+  }
+
+  saveContact() async {
+    _contactService.createContact(contact);
+    final value = await _contactService.getContactList();
+    _appModel.contactList.value = value;
   }
 }

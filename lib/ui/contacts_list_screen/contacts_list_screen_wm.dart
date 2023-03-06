@@ -24,12 +24,13 @@ ContactsListScreenWidgetModel defaultContactsListScreenWidgetModelFactory(
   );
 }
 
-// TODO: cover with documentation
-/// Default widget model for ContactsListScreenWidget
 class ContactsListScreenWidgetModel
     extends WidgetModel<ContactsListScreenWidget, ContactsListScreenModel>
     implements IContactsListScreenWidgetModel {
   final NavigationHelper _navigator;
+
+  @override
+  ValueListenable<List<Contact>> get contactList => model.contactList;
 
   ContactsListScreenWidgetModel(ContactsListScreenModel model, this._navigator) : super(model);
 
@@ -38,9 +39,6 @@ class ContactsListScreenWidgetModel
     super.initWidgetModel();
     model.getContactList();
   }
-
-  @override
-  ValueListenable<List<Contact>> get contactList => model.contactList;
 
   @override
   void openContactScreen([int? index]) {

@@ -1,11 +1,7 @@
 import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
-import 'package:phonebook2/entity/contact.dart';
 import 'contact_wm.dart';
 
-// TODO: cover with documentation
-/// Main widget for Contact module
 class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
   const ContactWidget({
     Key? key,
@@ -17,11 +13,19 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Контакт'),
+          actions: [
+            ValueListenableBuilder<bool>(
+            valueListenable: wm.readOnly,
+            builder: (_, readOnly, ___) {
+              return readOnly ? EditButton(wm: wm) : SaveButton(wm: wm);
+            }
+            )
+          ],
         ),
         body: SingleChildScrollView(
-          child: ValueListenableBuilder<Contact>(
-            valueListenable: wm.contact,
-            builder: (_, contact, ___) {
+          child: ValueListenableBuilder<bool>(
+            valueListenable: wm.readOnly,
+            builder: (_, readOnly, ___) {
               return Column(
                 children: [
                   const SizedBox(height: 20),
@@ -31,6 +35,7 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
                       border: OutlineInputBorder(),
                       label: Text('Фамилия'),
                     ),
+                    readOnly: readOnly,
                   ),
                   const SizedBox(height: 20),
                   TextField(
@@ -39,6 +44,7 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
                       border: OutlineInputBorder(),
                       label: Text('Имя'),
                     ),
+                    readOnly: readOnly,
                   ),
                   const SizedBox(height: 20),
                   TextField(
@@ -47,6 +53,7 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
                       border: OutlineInputBorder(),
                       label: Text('Отчество'),
                     ),
+                    readOnly: readOnly,
                   ),
                   const SizedBox(height: 20),
                   TextField(
@@ -55,23 +62,11 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
                       border: OutlineInputBorder(),
                       label: Text('Псевдоним'),
                     ),
+                    readOnly: readOnly,
                   ),
                   const SizedBox(height: 20),
                   Column(
-                    children: [
-                      const Text('Телефоны'),
-                      StateNotifierBuilder<List<TextEditingController>>(
-                        listenableState: wm.phonesCtrlList,
-                        builder: (_, controllersList) {
-                          return PhonesGroup(controllers: controllersList);
-                        },
-                      ),
-                      TextButton(
-                          onPressed: () {
-                            wm.addPhone();
-                          },
-                          child: const Text('Добавить'))
-                    ],
+                    children: _buildPhoneGroup(wm)
                   ),
                 ],
               );
@@ -79,11 +74,32 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
           ),
         ));
   }
+
+  List<Widget> _buildPhoneGroup(IContactWidgetModel wm) {
+    final List<Widget> column = [
+      const Text('Телефоны'),
+      ValueListenableBuilder<List<TextEditingController>>(
+        valueListenable: wm.phonesCtrlList,
+        builder: (_, controllersList, __) {
+          return PhonesGroup(readOnly: wm.readOnly.value, controllers: controllersList);
+        },
+      ),
+    ];
+    if (!wm.readOnly.value) {
+      column.add(TextButton(
+      onPressed: () {
+        wm.addPhone();
+      },
+      child: const Text('Добавить')));
+    }
+    return column;
+  }
 }
 
 class PhonesGroup extends StatelessWidget {
+  final bool readOnly;
   final List<TextEditingController>? controllers;
-  const PhonesGroup({Key? key, required this.controllers}) : super(key: key);
+  const PhonesGroup({Key? key, required this.readOnly, required this.controllers}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -96,6 +112,7 @@ class PhonesGroup extends StatelessWidget {
             border: OutlineInputBorder(),
             label: Text("Телефон"),
           ),
+          readOnly: readOnly,
         ),
         trailing: PopupMenuButton(
           itemBuilder: (BuildContext context) {
@@ -104,5 +121,29 @@ class PhonesGroup extends StatelessWidget {
         ),
       );
     }).toList());
+  }
+}
+
+class EditButton extends StatelessWidget {
+  final IContactWidgetModel wm;
+  const EditButton({Key? key, required this.wm}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+              onPressed: () {wm.changeMode();}, 
+              child: const Icon(Icons.edit));
+  }
+}
+
+class SaveButton extends StatelessWidget {
+  final IContactWidgetModel wm;
+  const SaveButton({Key? key, required this.wm}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+              onPressed: () {wm.saveContact();}, 
+              child: const Icon(Icons.save));
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../../entity/contact.dart';
 import 'contacts_list_screen_wm.dart';
 
-// TODO: cover with documentation
 /// Main widget for ContactsListScreen module
 class ContactsListScreenWidget
     extends ElementaryWidget<IContactsListScreenWidgetModel> {
@@ -19,13 +18,15 @@ class ContactsListScreenWidget
           title: const Text('Список контактов'),
         ),
         body: SingleChildScrollView(
-            child: Container(
-                child: ValueListenableBuilder<List<Contact>>(
-          valueListenable: wm.contactList,
-          builder: (_, data, __) {
-            return buildExpansionPanelList(wm, data);
-          },
-        ))),
+                child: Container(
+                  child: ValueListenableBuilder<List<Contact>>(
+                    valueListenable: wm.contactList,
+                    builder: (_, data, __) {
+                      return buildExpansionPanelList(wm, data);
+                    },
+                  )
+                )
+        ),
         floatingActionButton: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -60,7 +61,7 @@ class ContactsListScreenWidget
                       fontSize: 20,
                     ),
                   ),
-                  Text(contact.email)
+                  Text(contact.email.isNotEmpty ? contact.email[0] : "")
                 ],
               ),
               onLongPress: () => wm.openContactScreen(index),
