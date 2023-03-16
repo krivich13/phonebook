@@ -8,12 +8,12 @@ class Contact {
   final String lastName;
   final String firstName;
   final String secondName;
-  final String? nickName;
+  final String nickName;
   final List<String> phones;
   final List<String> email;
   final List<String> socNet;
   final List<String> importantDate;
-  final String? comment;
+  final String comment;
 
   Contact({
     required this.id,
@@ -27,6 +27,19 @@ class Contact {
     required this.importantDate,
     required this.comment
   });
+
+  Contact.undefined(): this(
+    id: 0,
+    lastName: "",
+    firstName: "",
+    secondName: "",
+    nickName: "",
+    phones: [],
+    email: [],
+    socNet: [],
+    importantDate: [],
+    comment: ""
+  );
 
   factory Contact.fromJson(Map<String, dynamic> json) => _$ContactFromJson(json);
 

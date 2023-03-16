@@ -81,7 +81,7 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
     _lastNameCtrl.text = contact.lastName;
     _firstNameCtrl.text = contact.firstName;
     _secondNameCtrl.text = contact.secondName;
-    _lastNameCtrl.text = contact.lastName;
+    _nickNameCtrl.text = contact.nickName;
     _phonesCtrlList.value = contact.phones.map<TextEditingController>((String phone) {
       TextEditingController controller = TextEditingController();
       controller.text = phone;
@@ -108,19 +108,23 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
   @override
   void saveContact() async {
     Contact newContact = Contact(
-      id: 0, 
-      lastName: _lastNameCtrl.text, 
-      firstName: _firstNameCtrl.text, 
-      secondName: _secondNameCtrl.text, 
-      nickName: _nickNameCtrl.text, 
-      phones: _phonesCtrlList.value.map<String>((ctrl) => ctrl.text).toList(),
-      email: [], 
-      socNet: [], 
-      importantDate: [], 
-      comment: ""
-    );
-    model.contact = newContact;
-    await model.saveContact();
+          id: model.contact.id,
+          lastName: _lastNameCtrl.text,
+          firstName: _firstNameCtrl.text,
+          secondName: _secondNameCtrl.text,
+          nickName: _nickNameCtrl.text,
+          phones:
+              _phonesCtrlList.value.map<String>((ctrl) => ctrl.text).toList(),
+          email: [],
+          socNet: [],
+          importantDate: [],
+          comment: "");
+      model.contact = newContact;
+    if (model.selectedContact == null) {
+      await model.saveContact();
+    } else {
+      await model.updateContact();
+    }
     _navigator.push(
       context,
       MaterialPageRoute<void>(

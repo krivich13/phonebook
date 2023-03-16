@@ -44,4 +44,23 @@ class ContactService {
       throw Exception('Failed to create contact.');
     }
   }
+
+  // TODO переписать метод обновления контакта
+  Future<int> updateContact(int id, Contact contact) async {
+    String json = jsonEncode(contact);
+    
+    final response = await http.put(
+      Uri.parse('http://10.0.2.2:8080/contacts/$id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: json
+    );
+
+    if (response.statusCode == 200) {
+      return int.parse(response.body);
+    } else {
+      throw Exception('Failed to update contact.');
+    }
+  }
 }

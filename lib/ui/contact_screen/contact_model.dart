@@ -5,19 +5,7 @@ import '../../app_model.dart';
 import '../../entity/contact.dart';
 
 class ContactModel extends ElementaryModel {
-  Contact contact = Contact(
-    id: 0,
-    lastName: '',
-    firstName: '',
-    secondName: '',
-    nickName: '',
-    phones: [],
-    email: [],
-    socNet: [],
-    importantDate: [],
-    comment: '',
-
-  );
+  late Contact contact;
 
   final ContactService _contactService;
 
@@ -29,11 +17,14 @@ class ContactModel extends ElementaryModel {
 
   ContactModel(this._appModel, this._contactService);
 
+  int? get selectedContact => _appModel.openedContact;
+
   getContact() {
     if (_appModel.openedContact != null) {
       contact = _appModel.contactList.value[_appModel.openedContact!];
       readOnly.value = true;
     } else {
+      contact = Contact.undefined();
       readOnly.value = false;
     }
   }
@@ -44,6 +35,12 @@ class ContactModel extends ElementaryModel {
 
   saveContact() async {
     _contactService.createContact(contact);
+    final value = await _contactService.getContactList();
+    _appModel.contactList.value = value;
+  }
+
+  updateContact() async {
+    _contactService.updateContact(contact.id, contact); // TODO избавиться от восклицательного знака
     final value = await _contactService.getContactList();
     _appModel.contactList.value = value;
   }
