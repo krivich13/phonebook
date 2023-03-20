@@ -1,5 +1,8 @@
 import 'package:elementary/elementary.dart';
 import 'package:flutter/material.dart';
+import 'package:phonebook2/ui/contact_screen/widgets/email_group.dart';
+import 'package:phonebook2/ui/contact_screen/widgets/phones_group.dart';
+import 'package:phonebook2/ui/contact_screen/widgets/socnet_gruop.dart';
 import 'contact_wm.dart';
 
 class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
@@ -65,62 +68,14 @@ class ContactWidget extends ElementaryWidget<IContactWidgetModel> {
                     readOnly: readOnly,
                   ),
                   const SizedBox(height: 20),
-                  Column(
-                    children: _buildPhoneGroup(wm)
-                  ),
+                  PhonesGroup(wm: wm),
+                  EmailGroup(wm: wm),
+                  SocNetGroup(wm: wm)
                 ],
               );
             },
           ),
         ));
-  }
-
-  List<Widget> _buildPhoneGroup(IContactWidgetModel wm) {
-    final List<Widget> column = [
-      const Text('Телефоны'),
-      ValueListenableBuilder<List<TextEditingController>>(
-        valueListenable: wm.phonesCtrlList,
-        builder: (_, controllersList, __) {
-          return PhonesGroup(readOnly: wm.readOnly.value, controllers: controllersList);
-        },
-      ),
-    ];
-    if (!wm.readOnly.value) {
-      column.add(TextButton(
-      onPressed: () {
-        wm.addPhone();
-      },
-      child: const Text('Добавить')));
-    }
-    return column;
-  }
-}
-
-class PhonesGroup extends StatelessWidget {
-  final bool readOnly;
-  final List<TextEditingController>? controllers;
-  const PhonesGroup({Key? key, required this.readOnly, required this.controllers}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-        children: controllers!.map<ListTile>((TextEditingController phoneCtrl) {
-      return ListTile(
-        title: TextField(
-          controller: phoneCtrl,
-          decoration: const InputDecoration(
-            border: OutlineInputBorder(),
-            label: Text("Телефон"),
-          ),
-          readOnly: readOnly,
-        ),
-        trailing: PopupMenuButton(
-          itemBuilder: (BuildContext context) {
-            return [const PopupMenuItem(child: Text('Сделать основным'))];
-          },
-        ),
-      );
-    }).toList());
   }
 }
 
