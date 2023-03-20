@@ -17,15 +17,19 @@ abstract class IContactWidgetModel extends IWidgetModel {
   TextEditingController get secondNameCtrl;
   TextEditingController get nickNameCtrl;
   ValueListenable<List<TextEditingController>> get phonesCtrlList;
-  List<TextEditingController> get emailCtrlList;
-  List<TextEditingController> get socNetCtrlList;
+  ValueListenable<List<TextEditingController>> get emailCtrlList;
+  ValueListenable<List<TextEditingController>> get socNetCtrlList;
   ValueListenable<bool> get readOnly;
 
   void addPhone();
 
+  void addEmail();
+
   void changeMode();
 
   void saveContact();
+
+  void addSocNet();
 }
 
 ContactWidgetModel defaultContactWidgetModelFactory(BuildContext context) {
@@ -45,8 +49,8 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
   final TextEditingController _secondNameCtrl = TextEditingController();
   final TextEditingController _nickNameCtrl = TextEditingController();
   final ValueNotifier<List<TextEditingController>> _phonesCtrlList = ValueNotifier([]);
-  final List<TextEditingController> _emailCtrlList = [];
-  final List<TextEditingController> _socNetCtrlList = [];
+  final ValueNotifier<List<TextEditingController>> _emailCtrlList = ValueNotifier([]);
+  final ValueNotifier<List<TextEditingController>> _socNetCtrlList = ValueNotifier([]);
 
   @override
   Contact get contact => model.contact;
@@ -55,7 +59,7 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
   ValueListenable<List<TextEditingController>> get phonesCtrlList => _phonesCtrlList;
 
   @override
-  List<TextEditingController> get emailCtrlList => _emailCtrlList;
+  ValueListenable<List<TextEditingController>> get emailCtrlList => _emailCtrlList;
 
   @override
   TextEditingController get firstNameCtrl => _firstNameCtrl;
@@ -70,7 +74,7 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
   TextEditingController get secondNameCtrl => _secondNameCtrl;
 
   @override
-  List<TextEditingController> get socNetCtrlList => _socNetCtrlList;
+  ValueListenable<List<TextEditingController>> get socNetCtrlList => _socNetCtrlList;
 
   ContactWidgetModel(ContactModel model, this._navigator) : super(model);
 
@@ -85,6 +89,16 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
     _phonesCtrlList.value = contact.phones.map<TextEditingController>((String phone) {
       TextEditingController controller = TextEditingController();
       controller.text = phone;
+      return controller;
+    }).toList();
+    _emailCtrlList.value = contact.email.map<TextEditingController>((String email) {
+      TextEditingController controller = TextEditingController();
+      controller.text = email;
+      return controller;
+    }).toList();
+    _socNetCtrlList.value = contact.socNet.map<TextEditingController>((String socnet) {
+      TextEditingController controller = TextEditingController();
+      controller.text = socnet;
       return controller;
     }).toList();
   }
@@ -115,8 +129,10 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
           nickName: _nickNameCtrl.text,
           phones:
               _phonesCtrlList.value.map<String>((ctrl) => ctrl.text).toList(),
-          email: [],
-          socNet: [],
+          email: 
+              _emailCtrlList.value.map<String>((ctrl) => ctrl.text).toList(),
+          socNet:
+              _socNetCtrlList.value.map<String>((ctrl) => ctrl.text).toList(),
           importantDate: [],
           comment: "");
       model.contact = newContact;
@@ -131,6 +147,22 @@ class ContactWidgetModel extends WidgetModel<ContactWidget, ContactModel>
         builder: (_) => const ContactsListScreenWidget(),
       ),
     );
+  }
+  
+  @override
+  void addEmail() {
+    TextEditingController controller = TextEditingController();
+    controller.text = "";
+    _emailCtrlList.value.add(controller);
+    _emailCtrlList.notifyListeners();
+  }
+
+  @override
+  void addSocNet() {
+    TextEditingController controller = TextEditingController();
+    controller.text = "";
+    _socNetCtrlList.value.add(controller);
+    _socNetCtrlList.notifyListeners();
   }
     
 }
